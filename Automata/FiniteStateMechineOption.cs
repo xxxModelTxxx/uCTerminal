@@ -2,6 +2,9 @@
 
 namespace EMP.Automata
 {
+    /// <summary>
+    /// Finite state machine computation options.
+    /// </summary>
     [Flags]
     public enum FiniteStateMechineOption
     {

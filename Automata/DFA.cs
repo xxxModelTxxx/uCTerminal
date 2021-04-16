@@ -2,18 +2,44 @@
 
 namespace EMP.Automata
 {
+    /// <summary>
+    /// Represents instance of Deterministic Finite Automata.
+    /// </summary>
+    /// <typeparam name="TAlphabet">Generic type representing symbol of input alphabet. </typeparam>
+    /// <typeparam name="TToken">Generic type representing token that may be carried by state.</typeparam>
     public class DFA<TAlphabet, TToken> : IFiniteStateMachine<TAlphabet, TToken> where TAlphabet : IEqualityComparer<TAlphabet>
     {
         // TODO: Wymyślić bardziej adekwatną nazwę dla _buffer
+        /// <summary>
+        /// Internal buffer for already processed and current input symbols.
+        /// </summary>
         private List<TAlphabet> _buffer;
-        private int _counter;        
+        /// <summary>
+        /// Represents internal program counter. Points at current state.
+        /// </summary>
+        private int _counter;
+        /// <summary>
+        /// Colection of DFA states.
+        /// </summary>
         private IDictionary<int, State<TAlphabet, TToken>> _states;
+        /// <summary>
+        /// Collection of DFA transitions.
+        /// </summary>
         private IEnumerable<Transition<TAlphabet>> _transitions;
+        /// <summary>
+        /// DFA options.
+        /// </summary>
         private FiniteStateMechineOption _options;
 
-        // TODO: Zweryfikować czy da się zweryfikować czy nie ma duplikatów w _transitions;
-        public DFA( IDictionary<int, State<TAlphabet, TToken>> states, 
-                    IEnumerable<Transition<TAlphabet>> transitions, 
+        // TODO: Zastanowić się czy da się zweryfikować czy nie ma duplikatów w _transitions;
+        /// <summary>
+        /// Returns instance of DFA.
+        /// </summary>
+        /// <param name="states">Collection of DFA states.</param>
+        /// <param name="transitions">Collection of DFA transitions.</param>
+        /// <param name="options">DFA options.</param>
+        public DFA(IDictionary<int, State<TAlphabet, TToken>> states,
+                    IEnumerable<Transition<TAlphabet>> transitions,
                     FiniteStateMechineOption options = FiniteStateMechineOption.None)
         {
             _buffer = new List<TAlphabet>();
@@ -23,28 +49,44 @@ namespace EMP.Automata
             _options = options;
         }
 
+        /// <summary>
+        /// Performs single computation step of finite state machine.
+        /// </summary>
+        /// <param name="symbol">Input transition symbol.</param>
+        /// <returns></returns>
         public State<TAlphabet, TToken> MoveNext(TAlphabet symbol)
         {
             _buffer.Add(symbol);
 
-            foreach(Transition<TAlphabet> tr in _transitions)
+            foreach (Transition<TAlphabet> tr in _transitions)
             {
-                if(tr.SourceState == _counter && tr.TransitionSymbols.Contains(symbol))
+                if (tr.SourceState == _counter && tr.TransitionSymbols.Contains(symbol))
                 {
-                    TryCallExitEvent();
-                    _counter = tr.TargetState;
-                    TryCallEntryEvent();
+                    if (_counter != tr.TargetState)
+                    {
+                        TryCallExitEvent();
+                        _counter = tr.TargetState;
+                        TryCallEntryEvent();
+                    }
                     return _states[_counter];
                 }
             }
 
             return TryTerminateInvalidControlFlow();
         }
+        /// <summary>
+        /// Resets DFA. Calling this method resets internal program counter (next step will be processed from statring state) and clears internal buffer if ClearBufferOnReset option is eneabled.
+        /// </summary>
         public void Reset()
         {
             _counter = 0;
             TryResetBuffer();
         }
+        /// <summary>
+        /// Runs complete program of DFA. Program is provided as a collection of transition symbols.
+        /// </summary>
+        /// <param name="input">Program to be performed by finite state machine represented as collection of input symbols.</param>
+        /// <returns></returns>
         public IEnumerable<TToken> Run(IEnumerable<TAlphabet> input)
         {
             _buffer.Clear();
@@ -69,6 +111,9 @@ namespace EMP.Automata
 
             return _tokens;
         }
+        /// <summary>
+        /// Performs attempt to reset DFA. Reset is performed if ResetOnTrapState option is eneabled.
+        /// </summary>
         private void TryEscapeTrapState()
         {
             if ((_options & FiniteStateMechineOption.ResetOnTrapState) != 0)
@@ -76,6 +121,9 @@ namespace EMP.Automata
                 Reset();
             }
         }
+        /// <summary>
+        /// Performs attempt of invoking EntryEvent for current state. Attempt is succesful if CallEntryEvent option is eneabled.
+        /// </summary>
         private void TryCallEntryEvent()
         {
             if ((_options & FiniteStateMechineOption.CallEntryEvent) != 0)
@@ -83,6 +131,9 @@ namespace EMP.Automata
                 _states[_counter].EnterState(_buffer);
             }
         }
+        /// <summary>
+        /// Performs attempt of invoking ExitEvent for current state. Attempt is succesful if CallExitEvent option is eneabled.
+        /// </summary>
         private void TryCallExitEvent()
         {
             if ((_options & FiniteStateMechineOption.CallExitEvent) != 0)
@@ -90,6 +141,9 @@ namespace EMP.Automata
                 _states[_counter].ExitState(_buffer);
             }
         }
+        /// <summary>
+        /// Performs attempt to reset internal input buffer. Reset is performed if ClearBufferOnReset option is eneabled.
+        /// </summary>
         private void TryResetBuffer()
         {
             if ((_options & FiniteStateMechineOption.ClearBufferOnReset) != 0)
@@ -97,6 +151,11 @@ namespace EMP.Automata
                 _buffer.Clear();
             }
         }
+        /// <summary>
+        /// Performs attempt of restoring control flow after invalid input symbol or lack of relevant transition. 
+        /// If RepeatStateIfTransitionNotFound option is eneabled, program is contiued from current state (if next input symbol is prvided). Othervise throws InvalidControlFlowException exception.
+        /// </summary>
+        /// <returns></returns>
         private State<TAlphabet, TToken> TryTerminateInvalidControlFlow()
         {
             if ((_options & FiniteStateMechineOption.RepeatStateIfTransitionNotFound) != 0)
