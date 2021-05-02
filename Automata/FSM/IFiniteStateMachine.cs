@@ -1,22 +1,22 @@
 ﻿using System.Collections.Generic;
 
-namespace EMP.Automata
+namespace EMP.Automata.FSM
 {
     // TODO: Do rozpatrzenia czy Run() nie powinno być wywoływane w osobnym wątku lub jako async.
     // TODO: Przerobić MoveNext tak aby zwracał kolekcję State'sów. W celu implementacji w przyszłości klas NFA
     /// <summary>
     /// Provides general interface for finite state machine.
     /// </summary>
-    /// <typeparam name="TAlphabet">Generic type representing symbol of input alphabet. </typeparam>
+    /// <typeparam name="TSymbol">Generic type representing symbol of input alphabet. </typeparam>
     /// <typeparam name="TToken">Generic type representing token that may be carried by state.</typeparam>
-    public interface IFiniteStateMachine<TAlphabet, TToken> where TAlphabet : IEqualityComparer<TAlphabet>
+    public interface IFiniteStateMachine<TSymbol, TToken>
     {
         /// <summary>
         /// Performs single computation step of finite state machine.
         /// </summary>
         /// <param name="symbol">Input transition symbol.</param>
         /// <returns></returns>
-        State<TAlphabet, TToken> MoveNext(TAlphabet symbol);
+        State<TSymbol, TToken> MoveNext(TSymbol symbol);
         /// <summary>
         /// Resets finite state machine. Calling theis method causes that next step will be processed from statring state.
         /// </summary>
@@ -26,6 +26,6 @@ namespace EMP.Automata
         /// </summary>
         /// <param name="input">Program to be performed by finite state machine represented as collection of input symbols.</param>
         /// <returns></returns>
-        IEnumerable<TToken> Run(IEnumerable<TAlphabet> input);
+        IEnumerable<TToken> Run(IEnumerable<TSymbol> input);
     }
 }

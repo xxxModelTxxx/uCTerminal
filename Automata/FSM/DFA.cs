@@ -1,19 +1,18 @@
 ﻿using System.Collections.Generic;
 
-namespace EMP.Automata
+namespace EMP.Automata.FSM
 {
     /// <summary>
     /// Represents instance of Deterministic Finite Automata.
     /// </summary>
-    /// <typeparam name="TAlphabet">Generic type representing symbol of input alphabet. </typeparam>
+    /// <typeparam name="TSymbol">Generic type representing symbol of input alphabet. </typeparam>
     /// <typeparam name="TToken">Generic type representing token that may be carried by state.</typeparam>
-    public class DFA<TAlphabet, TToken> : IFiniteStateMachine<TAlphabet, TToken> where TAlphabet : IEqualityComparer<TAlphabet>
+    public class DFA<TSymbol, TToken> : IFiniteStateMachine<TSymbol, TToken>
     {
-        // TODO: Wymyślić bardziej adekwatną nazwę dla _buffer
         /// <summary>
         /// Internal buffer for already processed and current input symbols.
         /// </summary>
-        private List<TAlphabet> _buffer;
+        private List<TSymbol> _inputBuffer;
         /// <summary>
         /// Represents internal program counter. Points at current state.
         /// </summary>
@@ -21,11 +20,11 @@ namespace EMP.Automata
         /// <summary>
         /// Colection of DFA states.
         /// </summary>
-        private IDictionary<int, State<TAlphabet, TToken>> _states;
+        private IDictionary<int, State<TSymbol, TToken>> _states;
         /// <summary>
         /// Collection of DFA transitions.
         /// </summary>
-        private IEnumerable<Transition<TAlphabet>> _transitions;
+        private IEnumerable<Transition<TSymbol>> _transitions;
         /// <summary>
         /// DFA options.
         /// </summary>
@@ -38,11 +37,11 @@ namespace EMP.Automata
         /// <param name="states">Collection of DFA states.</param>
         /// <param name="transitions">Collection of DFA transitions.</param>
         /// <param name="options">DFA options.</param>
-        public DFA(IDictionary<int, State<TAlphabet, TToken>> states,
-                    IEnumerable<Transition<TAlphabet>> transitions,
+        public DFA(IDictionary<int, State<TSymbol, TToken>> states,
+                    IEnumerable<Transition<TSymbol>> transitions,
                     FiniteStateMechineOption options = FiniteStateMechineOption.None)
         {
-            _buffer = new List<TAlphabet>();
+            _inputBuffer = new List<TSymbol>();
             _counter = 0;
             _states = states;
             _transitions = transitions;
@@ -54,11 +53,11 @@ namespace EMP.Automata
         /// </summary>
         /// <param name="symbol">Input transition symbol.</param>
         /// <returns></returns>
-        public State<TAlphabet, TToken> MoveNext(TAlphabet symbol)
+        public State<TSymbol, TToken> MoveNext(TSymbol symbol)
         {
-            _buffer.Add(symbol);
+            _inputBuffer.Add(symbol);
 
-            foreach (Transition<TAlphabet> tr in _transitions)
+            foreach (Transition<TSymbol> tr in _transitions)
             {
                 if (tr.SourceState == _counter && tr.TransitionSymbols.Contains(symbol))
                 {
@@ -87,14 +86,14 @@ namespace EMP.Automata
         /// </summary>
         /// <param name="input">Program to be performed by finite state machine represented as collection of input symbols.</param>
         /// <returns></returns>
-        public IEnumerable<TToken> Run(IEnumerable<TAlphabet> input)
+        public IEnumerable<TToken> Run(IEnumerable<TSymbol> input)
         {
-            _buffer.Clear();
+            _inputBuffer.Clear();
             _counter = 0;
 
             IList<TToken> _tokens = new List<TToken>();
 
-            foreach (TAlphabet a in input)
+            foreach (TSymbol a in input)
             {
                 var ot = MoveNext(a);
 
@@ -128,7 +127,7 @@ namespace EMP.Automata
         {
             if ((_options & FiniteStateMechineOption.CallEntryEvent) != 0)
             {
-                _states[_counter].EnterState(_buffer);
+                _states[_counter].EnterState(_inputBuffer);
             }
         }
         /// <summary>
@@ -138,7 +137,7 @@ namespace EMP.Automata
         {
             if ((_options & FiniteStateMechineOption.CallExitEvent) != 0)
             {
-                _states[_counter].ExitState(_buffer);
+                _states[_counter].ExitState(_inputBuffer);
             }
         }
         /// <summary>
@@ -148,7 +147,7 @@ namespace EMP.Automata
         {
             if ((_options & FiniteStateMechineOption.ClearBufferOnReset) != 0)
             {
-                _buffer.Clear();
+                _inputBuffer.Clear();
             }
         }
         /// <summary>
@@ -156,7 +155,7 @@ namespace EMP.Automata
         /// If RepeatStateIfTransitionNotFound option is eneabled, program is contiued from current state (if next input symbol is prvided). Othervise throws InvalidControlFlowException exception.
         /// </summary>
         /// <returns></returns>
-        private State<TAlphabet, TToken> TryTerminateInvalidControlFlow()
+        private State<TSymbol, TToken> TryTerminateInvalidControlFlow()
         {
             if ((_options & FiniteStateMechineOption.RepeatStateIfTransitionNotFound) != 0)
             {
@@ -164,7 +163,7 @@ namespace EMP.Automata
             }
             else
             {
-                throw new InvalidControlFlowException<TAlphabet, TToken>(_states[_counter], _buffer[^1]);
+                throw new InvalidControlFlowException<TSymbol, TToken>(_states[_counter], _inputBuffer[^1]);
             }
         }
     }

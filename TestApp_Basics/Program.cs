@@ -7,18 +7,6 @@ namespace TestApp_Basics
     {
         static void Main(string[] args)
         {
-
         }
-
-        public class TestClass<T>
-        {
-            T temp;
-
-            public TestClass(T input)
-            {
-                temp = input ?? default
-            }
-        }
-
     }
 }

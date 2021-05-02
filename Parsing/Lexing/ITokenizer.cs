@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EMP.Parsing.Lexing
+namespace EMP.Syntax.Lexing
 {
     public interface ITokenizer<TEnum> where TEnum : Enum
     {

@@ -5,9 +5,9 @@ namespace EMP.Automata
     /// <summary>
     /// Represents single instance of for finite state machine state.
     /// </summary>
-    /// <typeparam name="TAlphabet">Generic type representing symbol of input alphabet. </typeparam>
+    /// <typeparam name="TSymbol">Generic type representing symbol of input alphabet. </typeparam>
     /// <typeparam name="TToken">Generic type representing token that may be carried by state.</typeparam>
-    public class State<TAlphabet, TToken> where TAlphabet : IEqualityComparer<TAlphabet>
+    public class State<TSymbol, TToken>
     {
         /// <summary>
         /// Parameterless constructor. Returns instance of State class.
@@ -86,7 +86,7 @@ namespace EMP.Automata
         /// Invokes EnterAction event.
         /// </summary>
         /// <param name="input"></param>
-        public void EnterState(IEnumerable<TAlphabet> input)
+        public void EnterState(IEnumerable<TSymbol> input)
         {
             EntryAction?.Invoke(this, new StateActionEventArgs(input));
         }
@@ -94,7 +94,7 @@ namespace EMP.Automata
         /// Invokes ExitAction event.
         /// </summary>
         /// <param name="input"></param>
-        public void ExitState(IEnumerable<TAlphabet> input)
+        public void ExitState(IEnumerable<TSymbol> input)
         {
             ExitAction?.Invoke(this, new StateActionEventArgs(input));
         }

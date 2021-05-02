@@ -5,8 +5,8 @@ namespace EMP.Automata
     /// <summary>
     /// Represent finite state machine single transition definition class.
     /// </summary>
-    /// <typeparam name="TAlphabet">Generic type representing symbol of input alphabet. </typeparam>
-    public class Transition<TAlphabet> where TAlphabet : IEqualityComparer<TAlphabet>
+    /// <typeparam name="TSymbol">Generic type representing symbol of input alphabet. </typeparam>
+    public class Transition<TSymbol>
     {
         /// <summary>
         /// Returns instance of Transition class.
@@ -14,11 +14,11 @@ namespace EMP.Automata
         /// <param name="sourceState">Source state of transition.</param>
         /// <param name="targetState">Target state of transition.</param>
         /// <param name="symbol">Transition symbol.</param>
-        public Transition(int sourceState, int targetState, TAlphabet symbol)
+        public Transition(int sourceState, int targetState, TSymbol symbol)
         {
             SourceState = sourceState;
             TargetState = targetState;
-            TransitionSymbols = new HashSet<TAlphabet>(new TAlphabet[] { symbol });
+            TransitionSymbols = new HashSet<TSymbol>(new TSymbol[] { symbol });
         }
         /// <summary>
         /// Returns instance of Transition class.
@@ -26,11 +26,11 @@ namespace EMP.Automata
         /// <param name="sourceState">Source state of transition.</param>
         /// <param name="targetState">Target state of transition.</param>
         /// <param name="symbols">Collection of transition symbols.</param>
-        public Transition(int sourceStateID, int targetStateID, IEnumerable<TAlphabet> symbols)
+        public Transition(int sourceStateID, int targetStateID, IEnumerable<TSymbol> symbols)
         {
             SourceState = sourceStateID;
             TargetState = targetStateID;
-            TransitionSymbols = new HashSet<TAlphabet>(symbols);
+            TransitionSymbols = new HashSet<TSymbol>(symbols);
         }
 
         /// <summary>
@@ -44,6 +44,6 @@ namespace EMP.Automata
         /// <summary>
         /// Returns HashSet collection of transition symbols.
         /// </summary>
-        public HashSet<TAlphabet> TransitionSymbols { get; }
+        public HashSet<TSymbol> TransitionSymbols { get; }
     }
 }

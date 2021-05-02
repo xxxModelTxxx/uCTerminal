@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EMP.Parsing.Lexing
+namespace EMP.Syntax.Lexing
 {
     // TODO: Consider changing Value identifier name to something else.
     public class Token<TEnum> where TEnum : Enum

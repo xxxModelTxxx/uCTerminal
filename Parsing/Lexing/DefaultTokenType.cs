@@ -1,4 +1,4 @@
-﻿namespace EMP.Parsing.Lexing
+﻿namespace EMP.Syntax.Lexing
 {
     // TODO: Fill enum with remaining tokens
     public enum DefaultTokenType

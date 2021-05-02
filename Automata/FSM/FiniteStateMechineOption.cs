@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EMP.Automata
+namespace EMP.Automata.FSM
 {
     /// <summary>
     /// Finite state machine computation options.
