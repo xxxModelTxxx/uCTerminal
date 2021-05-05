@@ -5,18 +5,13 @@ VisualStudioVersion = 16.0.31025.194
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{66F5FBF4-714E-4E36-A047-2670AC2DABD0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp_Basics", "TestApp_Basics\TestApp_Basics.csproj", "{02861977-6FB4-4516-8C57-D58C8AC191FD}"
-	ProjectSection(ProjectDependencies) = postProject
-		{4BB105AC-0960-4A3C-B8A1-95D5D757B300} = {4BB105AC-0960-4A3C-B8A1-95D5D757B300}
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Automata", "Automata\Automata.csproj", "{606592C9-27F1-4CD7-8017-A8A1E82C3771}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Syntax", "Parsing\Syntax.csproj", "{4BB105AC-0960-4A3C-B8A1-95D5D757B300}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microcontrolers", "Microcontrolers\Microcontrolers.csproj", "{A83D55C9-AD6D-48BA-B57D-BFE520472DA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp_Grammar", "TestApp_Grammar\TestApp_Grammar.csproj", "{6BFAAD3F-D98B-4C36-98CF-38456BF71670}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp_Grammar", "TestApp_Grammar\TestApp_Grammar.csproj", "{6BFAAD3F-D98B-4C36-98CF-38456BF71670}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,10 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{02861977-6FB4-4516-8C57-D58C8AC191FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{02861977-6FB4-4516-8C57-D58C8AC191FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{02861977-6FB4-4516-8C57-D58C8AC191FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{02861977-6FB4-4516-8C57-D58C8AC191FD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{606592C9-27F1-4CD7-8017-A8A1E82C3771}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{606592C9-27F1-4CD7-8017-A8A1E82C3771}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{606592C9-27F1-4CD7-8017-A8A1E82C3771}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -49,7 +40,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{02861977-6FB4-4516-8C57-D58C8AC191FD} = {66F5FBF4-714E-4E36-A047-2670AC2DABD0}
 		{6BFAAD3F-D98B-4C36-98CF-38456BF71670} = {66F5FBF4-714E-4E36-A047-2670AC2DABD0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
