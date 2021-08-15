@@ -9,7 +9,27 @@ namespace EMP.Syntax.Grammar
 
         public LL1Grammar(IList<Rule> rules)
             : base(rules)
-        { }
+        {
+            foreach (Rule r in rules)
+            {
+                if (r.Left.First().IsTerminal)
+                {
+                    throw new InvalidRuleException(r, "Invalid LL1 grammar rule. Terminal symbol used on LHS.");
+                }
+                if (r.Right.Count() == 1 && r.Left.First().GetHashCode() == r.Right.First().GetHashCode())
+                {
+                    throw new InvalidRuleException(r, "Invalid LL1 grammar rule. LHS equals RHS.");
+                }
+                if (r.Left.Count() != 1)
+                {
+                    throw new InvalidRuleException(r, "Invalid LL1 grammar rule. LHS empty or more than one LHS symbol preasent.");
+                }
+                if (r.Right.Count() == 0)
+                {
+                    throw new InvalidRuleException(r, "Invalid LL1 grammar rule. RHS not preasent.");
+                }
+            }
+        }
 
         public Rule ParseTable(Symbol terminal, Symbol nonTerminal)
         {
@@ -22,15 +42,11 @@ namespace EMP.Syntax.Grammar
                 return _parseTable[terminal.GetHashCode()][nonTerminal.GetHashCode()];
             }
         }
-        private bool IsNullable(Symbol symbol)
-        {
-            return Nullable()[symbol];
-        }
-        private IDictionary<Symbol, ICollection<Symbol>> First()
+        private IDictionary<Symbol, ICollection<Symbol>> GetFirstSet()
         {
             // Initialize
             var output = new Dictionary<Symbol, HashSet<Symbol>>();
-            var nullables = Nullable();
+            var nullables = GetNullableSet();
             bool changed = true;
             foreach (Symbol s in Symbols)
             {
@@ -56,7 +72,7 @@ namespace EMP.Syntax.Grammar
             }
 
             // If X is nonterminal and X :== Y1 Y2 ... Yk. is a production, then place a in FIRST(X) if for some i, a is in
-            // FIRST(Yi), and e is in all of FIRST(Y1), ... , FIRST(Yi - 1); that is, Y1, ... ,Yi - 1 Þ e. If e is in FIRST(Yj) for
+            // FIRST(Yi), and e is in all of FIRST(Y1), ... , FIRST(Yi - 1); that is, Y1, ... ,Yi - 1 :== e. If e is in FIRST(Yj) for
             // all j = 1, 2, ... , k, then add e to FIRST(X).
             while (changed)
             {
@@ -64,50 +80,54 @@ namespace EMP.Syntax.Grammar
 
                 foreach (Rule r in Rules)
                 {
+                    bool fullNullable = true;
                     foreach (Symbol s1 in r.Right)
                     {
-                        if (s1.IsTerminal)
+                        // Check if symbol is nullable, if true move to next RHS symbol
+                        if (nullables[s1])
                         {
-                            changed = output[r.Left.First()].Add(s1);
-                            break;
+                            continue;
                         }
-                        else if (nullables[s1])
-                        {
-                            foreach (Symbol s2 in output[s1])
-                            {
-                                if (s2.GetHashCode() != Symbol.Epsilon.GetHashCode())
-                                {
-                                    changed |= output[r.Left.First()].Add(s2);
-                                }
-                            }
-                        }
+                        // Add FIRSTs set of current RHS symbol to FIRSTs set of LHS symbol and escape the loop
                         else
                         {
                             foreach (Symbol s2 in output[s1])
                             {
                                 changed |= output[r.Left.First()].Add(s2);
                             }
+                            fullNullable = false;
                             break;
                         }
+                    }
+                    // Check if all RHS symbols were nullable, if true add epsilon to FIRSTs set of LHS symbol
+                    if (fullNullable)
+                    {
+                        changed |= output[r.Left.First()].Add(Symbol.Epsilon);
                     }
                 }
             }
 
-            return (IDictionary <Symbol, ICollection<Symbol>>)output;
+            var result = new Dictionary<Symbol, ICollection<Symbol>>();
+            foreach (KeyValuePair<Symbol, HashSet<Symbol>> kvp in output)
+            {
+                result.Add(kvp.Key, kvp.Value);
+            }
+            return result;
         }
-        private IDictionary<Symbol, ICollection<Symbol>> Follow()
+        private IDictionary<Symbol, ICollection<Symbol>> GetFollowSet()
         {
             // Initialize
             var output = new Dictionary<Symbol, HashSet<Symbol>>();
-            var firsts = First();
+            var firsts = GetFirstSet();
             bool changed = true;
+
             foreach (Symbol s in NonTerminals)
             {
                 output.Add(s, new HashSet<Symbol>());
             }
 
             // Place $ in FOLLOW(S), where S is the start symbol and $ is the input right endmarker.
-            output[Symbol.Start].Add(Symbol.End);
+            output[Rules.First().Left.First()].Add(Symbol.End);
 
             // If there is a production A ::= aBb, then everything in FIRST(b), except for e, is placed in FOLLOW(B).
             foreach (Rule r in Rules)
@@ -172,15 +192,19 @@ namespace EMP.Syntax.Grammar
                 }
             }
 
-            return (IDictionary<Symbol, ICollection<Symbol>>)output;
-
+            var result = new Dictionary<Symbol, ICollection<Symbol>>();
+            foreach (KeyValuePair<Symbol, HashSet<Symbol>> kvp in output)
+            {
+                result.Add(kvp.Key, kvp.Value);
+            }
+            return result;
         }
-        private IDictionary<Symbol, bool> Nullable()
+        private IDictionary<Symbol, bool> GetNullableSet()
         {
             var changed = true;
             var output = new Dictionary<Symbol, bool>();
             
-            // Create collection of nullable
+            // Generate collection for nullable information
             foreach(Symbol s in Symbols)
             {
                 output.Add(s, false);

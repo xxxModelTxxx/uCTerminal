@@ -3,7 +3,7 @@
     public class Symbol
     {
         public static readonly Symbol End = new Symbol("#END", true);
-        public static readonly Symbol Epsilon = new Symbol("#NULL", true);
+        public static readonly Symbol Epsilon = new Symbol("#EPSILON", true);
         public static readonly Symbol Error = new Symbol("#ERROR", true);
         public static readonly Symbol Start = new Symbol("#START", false);
 
@@ -14,6 +14,11 @@
         }
 
         public bool IsTerminal { get; }
-        public string Name { get; } 
+        public string Name { get; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

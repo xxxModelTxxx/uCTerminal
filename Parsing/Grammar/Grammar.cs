@@ -51,6 +51,8 @@ namespace EMP.Syntax.Grammar
                     }
                 }
 
+                output.Add(Symbol.End.GetHashCode(), Symbol.End);
+
                 return output.Values;
             }
         }
