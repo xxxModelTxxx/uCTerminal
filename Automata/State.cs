@@ -49,7 +49,7 @@ namespace EMP.Automata
         /// <param name="token">Token carried by state.</param>
         /// <param name="entryAction">Delegate for EtryActoin event.</param>
         /// <param name="exitAction">Delegate for ExitAction event.</param>
-        public State(bool isAccept, bool isTrap, TToken token, StateActionEventHandler entryAction, StateActionEventHandler exitAction)
+        public State(bool isAccept, bool isTrap, TToken token, ActionEventHandler entryAction, ActionEventHandler exitAction)
         {
             IsAcceptState = isAccept;
             IsTrapState = isTrap;
@@ -60,14 +60,14 @@ namespace EMP.Automata
 
         /// <summary>
         /// State entry action event.
-        /// Event is called once after upon state entrance.
+        /// Event is called once upon state entrance.
         /// </summary>
-        public event StateActionEventHandler EntryAction;
+        public event ActionEventHandler EntryAction;
         /// <summary>
         /// State exit action event.
-        /// Event is called once after upon state exit.
+        /// Event is called once after state exit.
         /// /// </summary>
-        public event StateActionEventHandler ExitAction;
+        public event ActionEventHandler ExitAction;
 
         /// <summary>
         /// Returns true if state is accept state.
@@ -86,17 +86,17 @@ namespace EMP.Automata
         /// Invokes EnterAction event.
         /// </summary>
         /// <param name="input"></param>
-        public void EnterState(IEnumerable<TSymbol> input)
+        public void OnEntryAction(IEnumerable<TSymbol> input)
         {
-            EntryAction?.Invoke(this, new StateActionEventArgs(input));
+            EntryAction?.Invoke(this, new ActionEventArgs(input));
         }
         /// <summary>
         /// Invokes ExitAction event.
         /// </summary>
         /// <param name="input"></param>
-        public void ExitState(IEnumerable<TSymbol> input)
+        public void OnExitAction(IEnumerable<TSymbol> input)
         {
-            ExitAction?.Invoke(this, new StateActionEventArgs(input));
+            ExitAction?.Invoke(this, new ActionEventArgs(input));
         }
     }
 }

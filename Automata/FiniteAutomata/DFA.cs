@@ -1,51 +1,82 @@
 ﻿using System.Collections.Generic;
 
-namespace EMP.Automata.FSM
+namespace EMP.Automata.FiniteAutomata
 {
     /// <summary>
     /// Represents instance of Deterministic Finite Automata.
     /// </summary>
     /// <typeparam name="TSymbol">Generic type representing symbol of input alphabet. </typeparam>
     /// <typeparam name="TToken">Generic type representing token that may be carried by state.</typeparam>
-    public class DFA<TSymbol, TToken> : IFiniteStateMachine<TSymbol, TToken>
+    public class DFA<TSymbol, TToken> : IFiniteAutomata<TSymbol, TToken>
     {
         /// <summary>
         /// Internal buffer for already processed and current input symbols.
         /// </summary>
         private List<TSymbol> _inputBuffer;
         /// <summary>
-        /// Represents internal program counter. Points at current state.
+        /// Reference to current state.
         /// </summary>
-        private int _counter;
+        private State<TSymbol, TToken> _currentState;
         /// <summary>
-        /// Colection of DFA states.
+        /// Reference to start state.
         /// </summary>
-        private IDictionary<int, State<TSymbol, TToken>> _states;
+        private State<TSymbol, TToken> _startState;
         /// <summary>
-        /// Collection of DFA transitions.
+        /// State-Transition table
         /// </summary>
-        private IEnumerable<Transition<TSymbol>> _transitions;
+        private Dictionary<State<TSymbol, TToken>, Dictionary<TSymbol, Transition<TSymbol, TToken>>> _stateTransitionTable;
         /// <summary>
         /// DFA options.
         /// </summary>
-        private FiniteStateMechineOption _options;
+        private FiniteAutomataOption _options;
 
-        // TODO: Zastanowić się czy da się zweryfikować czy nie ma duplikatów w _transitions;
         /// <summary>
         /// Returns instance of DFA.
         /// </summary>
         /// <param name="states">Collection of DFA states.</param>
         /// <param name="transitions">Collection of DFA transitions.</param>
         /// <param name="options">DFA options.</param>
-        public DFA(IDictionary<int, State<TSymbol, TToken>> states,
-                    IEnumerable<Transition<TSymbol>> transitions,
-                    FiniteStateMechineOption options = FiniteStateMechineOption.None)
+        public DFA(IEnumerable<Transition<TSymbol, TToken>> transitions,
+                    State<TSymbol, TToken> startState,
+                    FiniteAutomataOption options = FiniteAutomataOption.None)
         {
             _inputBuffer = new List<TSymbol>();
-            _counter = 0;
-            _states = states;
-            _transitions = transitions;
+            _startState = startState;
+            _currentState = _startState;
             _options = options;
+        }
+
+        private void FillStateTransitionTable(IEnumerable<Transition<TSymbol, TToken>> transitions)
+        {
+            var states = new HashSet<State<TSymbol, TToken>>();
+            var symbols = new HashSet<TSymbol>();
+            
+            // Create State-Transition Table
+            _stateTransitionTable = new Dictionary<State<TSymbol, TToken>, Dictionary<TSymbol, Transition<TSymbol, TToken>>>();
+
+            // Extract states and symbols from transitions
+            foreach (Transition<TSymbol, TToken> t in transitions)
+            {
+                states.Add(t.SourceState);
+                states.Add(t.TargetState);
+                symbols.UnionWith(t.InputSymbols);
+            }
+
+            // Fill State-Transition Table rows
+            foreach (State<TSymbol, TToken> s in states)
+            {
+                _stateTransitionTable.Add(s, new Dictionary<TSymbol, Transition<TSymbol, TToken>>());
+            }
+
+            // Fill State-Transition Table
+            // UWAGA: tworzy wyłącznie kolumny tam gdzie są określone przejścia. W przypadku ich braku będzie NULL - sprawdzić zachowanie
+            foreach (Transition<TSymbol, TToken> t in transitions)
+            {
+                foreach (TSymbol s in t.InputSymbols)
+                {
+                    _stateTransitionTable[t.TargetState].Add(s, t);
+                }
+            }
         }
 
         /// <summary>
@@ -63,9 +94,9 @@ namespace EMP.Automata.FSM
                 {
                     if (_counter != tr.TargetState)
                     {
-                        TryCallExitEvent();
+                        TryCallExitAction();
                         _counter = tr.TargetState;
-                        TryCallEntryEvent();
+                        TryCallEntryAction();
                     }
                     return _states[_counter];
                 }
@@ -78,7 +109,7 @@ namespace EMP.Automata.FSM
         /// </summary>
         public void Reset()
         {
-            _counter = 0;
+            _currentState = _startState;
             TryResetBuffer();
         }
         /// <summary>
@@ -95,14 +126,14 @@ namespace EMP.Automata.FSM
 
             foreach (TSymbol a in input)
             {
-                var ot = MoveNext(a);
+                var st = MoveNext(a);
 
-                if (ot.IsAcceptState)
+                if (st.IsAcceptState)
                 {
-                    _tokens.Add(ot.Token);
+                    _tokens.Add(st.Token);
                     Reset();
                 }
-                else if (ot.IsTrapState)
+                else if (st.IsTrapState)
                 {
                     TryEscapeTrapState();
                 }
@@ -115,29 +146,39 @@ namespace EMP.Automata.FSM
         /// </summary>
         private void TryEscapeTrapState()
         {
-            if ((_options & FiniteStateMechineOption.ResetOnTrapState) != 0)
+            if ((_options & FiniteAutomataOption.ResetOnTrapState) != 0)
             {
                 Reset();
             }
         }
         /// <summary>
-        /// Performs attempt of invoking EntryEvent for current state. Attempt is succesful if CallEntryEvent option is eneabled.
+        /// Performs attempt of invoking EntryAction event for current state. Attempt is succesful if CallEntryAction option is eneabled.
         /// </summary>
-        private void TryCallEntryEvent()
+        private void TryCallEntryAction()
         {
-            if ((_options & FiniteStateMechineOption.CallEntryEvent) != 0)
+            if ((_options & FiniteAutomataOption.CallEntryAction) != 0)
             {
-                _states[_counter].EnterState(_inputBuffer);
+                _states[_counter].OnEntryAction(_inputBuffer);
             }
         }
         /// <summary>
-        /// Performs attempt of invoking ExitEvent for current state. Attempt is succesful if CallExitEvent option is eneabled.
+        /// Performs attempt of invoking ExitAction event for current state. Attempt is succesful if CallExitAction option is eneabled.
         /// </summary>
-        private void TryCallExitEvent()
+        private void TryCallExitAction()
         {
-            if ((_options & FiniteStateMechineOption.CallExitEvent) != 0)
+            if ((_options & FiniteAutomataOption.CallExitAction) != 0)
             {
-                _states[_counter].ExitState(_inputBuffer);
+                _states[_counter].OnExitAction(_inputBuffer);
+            }
+        }
+        /// <summary>
+        /// Performs attempt of invoking TransitionAction event for current transition. Attempt is succesful if CallTransitionAction option is eneabled.
+        /// </summary>
+        private void TryCallTransitionAction()
+        {
+            if ((_options & FiniteAutomataOption.CallTransitionAction) != 0)
+            {
+                _states[_counter].OnTransitionAction(_inputBuffer);
             }
         }
         /// <summary>
@@ -145,7 +186,7 @@ namespace EMP.Automata.FSM
         /// </summary>
         private void TryResetBuffer()
         {
-            if ((_options & FiniteStateMechineOption.ClearBufferOnReset) != 0)
+            if ((_options & FiniteAutomataOption.ClearBufferOnReset) != 0)
             {
                 _inputBuffer.Clear();
             }
@@ -157,7 +198,7 @@ namespace EMP.Automata.FSM
         /// <returns></returns>
         private State<TSymbol, TToken> TryTerminateInvalidControlFlow()
         {
-            if ((_options & FiniteStateMechineOption.RepeatStateIfTransitionNotFound) != 0)
+            if ((_options & FiniteAutomataOption.RepeatStateIfTransitionNotFound) != 0)
             {
                 return _states[_counter];
             }

@@ -16,6 +16,23 @@ namespace EMP.Syntax.Grammar
         public IEnumerable<Symbol> Left { get; }
         public IEnumerable<Symbol> Right { get; }
 
+        public override bool Equals(object obj)
+        {
+            Rule r = obj as Rule;
+
+            if (r == null)
+            {
+                return false;
+            }
+            else
+            {
+                return r.ToString() == ToString();
+            }
+        }
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
+        }
         public override string ToString()
         {
             var sb = new StringBuilder();

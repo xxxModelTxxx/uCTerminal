@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="PDA\" />
+    <Folder Include="PushDownAutomata\" />
   </ItemGroup>
 
 </Project>

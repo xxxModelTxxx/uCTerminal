@@ -8,10 +8,12 @@ namespace TestApp_Grammar
     {
         static void Main(string[] args)
         {
-
+            TestFirstFollow();
         }
 
-        static void FirstFollowTest()
+        #region Old functions
+
+        static void TestFirstFollow()
         {
             //E → T X
             //X → +E
@@ -44,29 +46,8 @@ namespace TestApp_Grammar
             TestRules.Add(new Rule(new Symbol[] { NS_Y }, new Symbol[] { Symbol.Epsilon }));
 
             var TestGrammar = new LL1Grammar(TestRules);
-
-            /*
-            var Firsts = TestGrammar.GetFirstSet();
-            var Follows = TestGrammar.GetFollowSet();
-
-            // Console.WriteLine("{0,-20} {1,-20} {2, -20}", NS_S.Name, TestGrammar.IsNullable(NS_S), Print(Firsts[NS_S]));
-            Console.WriteLine("{0,-20} {1,-20} {2, -20} {3, -20}", "Non-terminal", "Nullable", "Firsts", "Follows");
-            Console.WriteLine("{0,-20} {1,-20} {2, -20} {3, -20}", NS_Y.Name, TestGrammar.IsNullable(NS_Y), Print(Firsts[NS_Y]), Print(Follows[NS_Y]));
-            Console.WriteLine("{0,-20} {1,-20} {2, -20} {3, -20}", NS_X.Name, TestGrammar.IsNullable(NS_X), Print(Firsts[NS_X]), Print(Follows[NS_X]));
-            Console.WriteLine("{0,-20} {1,-20} {2, -20} {3, -20}", NS_T.Name, TestGrammar.IsNullable(NS_T), Print(Firsts[NS_T]), Print(Follows[NS_T]));
-            Console.WriteLine("{0,-20} {1,-20} {2, -20} {3, -20}", NS_E.Name, TestGrammar.IsNullable(NS_E), Print(Firsts[NS_E]), Print(Follows[NS_E]));
-            Console.ReadLine();
-            */        
-    }
-        static string Print(ICollection<Symbol> c)
-        {
-            string str = string.Empty;
-            foreach (Symbol s in c)
-            {
-                str += s.Name + " ";
-            }
-            return str;
+            TestGrammar.PrintSummary();
         }
-
+        #endregion
     }
 }

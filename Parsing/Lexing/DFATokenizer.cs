@@ -1,27 +1,27 @@
-﻿using EMP.Automata.FSM;
+﻿using EMP.Automata.FiniteAutomata;
 using System;
 using System.Collections.Generic;
 
 namespace EMP.Syntax.Lexing
 {
     /// <summary>
-    /// Represents tokenizer class utilizing deterministic finite automata in lexing process.
+    /// Represents tokenizer class utilizing deterministic finite state machine in lexing process.
     /// </summary>
     /// <typeparam name="TEnum">Token type enumeration. DefaultTokenType enum can be used in case if no other specific TokenType enum is implemented.</typeparam>
     public class DFATokenizer<TEnum> : ITokenizer<TEnum> where TEnum : Enum
     {
         /// <summary>
-        /// Internal instance of deterministic finite automata (DFA) class, used for input lexing.
+        /// Internal instance of deterministic finite state machine (DFSM) class, used for input lexing.
         /// </summary>
-        DFA<char, Token<TEnum>> _dfa;
+        private DFA<char, Token<TEnum>> _dfsm;
 
         /// <summary>
-        /// Returns instance of DFATokenizer class.
+        /// Returns instance of DFSMTokenizer class.
         /// </summary>
-        /// <param name="dfa">Finite automata (DFA) class, used for input lexing</param>
-        public DFATokenizer(DFA<char, Token<TEnum>> dfa)
+        /// <param name="dfsm">Finite state machine (DFSM) class, used for input lexing</param>
+        public DFATokenizer(DFA<char, Token<TEnum>> dfsm)
         {
-            _dfa = dfa;
+            _dfsm = dfsm;
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace EMP.Syntax.Lexing
         /// <returns></returns>
         public IEnumerable<Token<TEnum>> Tokenize(string input)
         {
-            return _dfa.Run(input);
+            return _dfsm.Run(input);
         }
     }
 }

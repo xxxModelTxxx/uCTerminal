@@ -16,6 +16,23 @@
         public bool IsTerminal { get; }
         public string Name { get; }
 
+        public override bool Equals(object obj)
+        {
+            Symbol s = obj as Symbol;
+
+            if (s == null)
+            {
+                return false;
+            }
+            else
+            {
+                return s.Name == Name && s.IsTerminal == IsTerminal;
+            }
+        }
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
+        }
         public override string ToString()
         {
             return Name;

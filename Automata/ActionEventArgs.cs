@@ -5,12 +5,12 @@ namespace EMP.Automata
     /// <summary>
     /// EventArgs class for StateActionEventHandler delegate.
     /// </summary>
-    public class StateActionEventArgs : EventArgs
+    public class ActionEventArgs : EventArgs
     {
         /// <summary>
         /// Returns object passed with event.
         /// </summary>
-        public StateActionEventArgs(object e)
+        public ActionEventArgs(object e)
         {
             Package = e;
         }
