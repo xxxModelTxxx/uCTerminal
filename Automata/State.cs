@@ -1,61 +1,52 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace EMP.Automata
 {
     /// <summary>
     /// Represents single instance of for finite state machine state.
     /// </summary>
-    /// <typeparam name="TSymbol">Generic type representing symbol of input alphabet. </typeparam>
-    /// <typeparam name="TToken">Generic type representing token that may be carried by state.</typeparam>
-    public class State<TSymbol, TToken>
+    /// <typeparam name="TInSymbol">Generic type representing symbol of input alphabet. </typeparam>
+    /// <typeparam name="TOutSymbol">Generic type representing token that may be carried by state.</typeparam>
+    public class State<TInSymbol, TOutSymbol>
     {
+        private bool _isAcceptState;
+        private bool _isTrapState;
+        private TOutSymbol _output;
+
         /// <summary>
         /// Parameterless constructor. Returns instance of State class.
         /// </summary>
         public State()
         {
-            IsAcceptState = false;
-            IsTrapState = false;
-            Token = default;
+            _isAcceptState = false;
+            _isTrapState = false;
+            _output = default;
         }
         /// <summary>
         /// Returns instance of State class.
         /// </summary>
         /// <param name="isAccept">True if state is accept state.</param>
         /// <param name="isTrap">True if state is trap state.</param>
-        public State(bool isAccept, bool isTrap)
+        /// <param name="output">Token carried by state.</param>
+        public State(bool isAccept, bool isTrap, TOutSymbol output = default)
         {
-            IsAcceptState = isAccept;
-            IsTrapState = isTrap;
-            Token = default;
+            _isAcceptState = isAccept;
+            _isTrapState = isTrap;
+            _output = output ?? throw new ArgumentNullException();
         }
         /// <summary>
         /// Returns instance of State class.
         /// </summary>
         /// <param name="isAccept">True if state is accept state.</param>
         /// <param name="isTrap">True if state is trap state.</param>
-        /// <param name="token">Token carried by state.</param>
-        public State(bool isAccept, bool isTrap, TToken token)
-        {
-            IsAcceptState = isAccept;
-            IsTrapState = isTrap;
-            Token = token;
-        }
-        /// <summary>
-        /// Returns instance of State class.
-        /// </summary>
-        /// <param name="isAccept">True if state is accept state.</param>
-        /// <param name="isTrap">True if state is trap state.</param>
-        /// <param name="token">Token carried by state.</param>
+        /// <param name="output">Token carried by state.</param>
         /// <param name="entryAction">Delegate for EtryActoin event.</param>
         /// <param name="exitAction">Delegate for ExitAction event.</param>
-        public State(bool isAccept, bool isTrap, TToken token, ActionEventHandler entryAction, ActionEventHandler exitAction)
+        public State(bool isAccept, bool isTrap, TOutSymbol output, ActionEventHandler entryAction, ActionEventHandler exitAction)
+            : this(isAccept, isTrap, output)
         {
-            IsAcceptState = isAccept;
-            IsTrapState = isTrap;
-            Token = token;
-            if (entryAction != null) EntryAction += entryAction;
-            if (entryAction != null) ExitAction += exitAction;
+            if (entryAction is not null) EntryAction += entryAction;
+            if (entryAction is not null) ExitAction += exitAction;
         }
 
         /// <summary>
@@ -66,37 +57,37 @@ namespace EMP.Automata
         /// <summary>
         /// State exit action event.
         /// Event is called once after state exit.
-        /// /// </summary>
+        /// </summary>
         public event ActionEventHandler ExitAction;
 
         /// <summary>
         /// Returns true if state is accept state.
         /// </summary>
-        public bool IsAcceptState { get; }
+        public bool IsAcceptState => _isAcceptState;
         /// <summary>
         /// Returns true is state is trap state.
         /// </summary>
-        public bool IsTrapState { get; }
+        public bool IsTrapState => _isTrapState;
         /// <summary>
-        /// Returns token carried by state.
+        /// Returns output symbol carried by state.
         /// </summary>
-        public TToken Token { get; }
+        public TOutSymbol Output => _output;
 
         /// <summary>
         /// Invokes EnterAction event.
         /// </summary>
-        /// <param name="input"></param>
-        public void OnEntryAction(IEnumerable<TSymbol> input)
+        /// <param name="symbol"></param>
+        public void OnEntryAction(TInSymbol symbol)
         {
-            EntryAction?.Invoke(this, new ActionEventArgs(input));
+            EntryAction?.Invoke(this, new ActionEventArgs(symbol));
         }
         /// <summary>
         /// Invokes ExitAction event.
         /// </summary>
-        /// <param name="input"></param>
-        public void OnExitAction(IEnumerable<TSymbol> input)
+        /// <param name="symbol"></param>
+        public void OnExitAction(TInSymbol symbol)
         {
-            ExitAction?.Invoke(this, new ActionEventArgs(input));
+            ExitAction?.Invoke(this, new ActionEventArgs(symbol));
         }
     }
 }

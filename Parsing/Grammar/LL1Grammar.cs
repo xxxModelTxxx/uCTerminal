@@ -8,7 +8,7 @@ namespace EMP.Syntax.Grammar
     {
         private Dictionary<Symbol, Dictionary<Symbol, List<Rule>>> _parseTable;
 
-        public LL1Grammar(IList<Rule> rules)
+        public LL1Grammar(ICollection<Rule> rules)
             : base(rules)
         {
             foreach (Rule r in rules)

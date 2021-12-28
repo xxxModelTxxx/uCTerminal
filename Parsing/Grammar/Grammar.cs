@@ -4,11 +4,11 @@ namespace EMP.Syntax.Grammar
 {
     public abstract class Grammar
     {
-        private IList<Rule> _rules;
+        private ICollection<Rule> _rules;
 
-        public Grammar(IList<Rule> rules)
+        public Grammar(ICollection<Rule> rules)
         {
-            _rules = rules;
+            _rules = new List<Rule>(rules);
         }
 
         public IEnumerable<Rule> Rules 

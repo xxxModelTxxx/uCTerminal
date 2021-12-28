@@ -1,35 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace EMP.Automata
 {
     /// <summary>
-    /// Represents InvalidControlFlowException class for finite state machine.
+    /// Represents InvalidInputSymbolException class for finite state machine.
     /// </summary>
     /// <typeparam name="TInSymbol">Generic type representing symbol of input alphabet. </typeparam>
     /// <typeparam name="TOutSymbol">Generic type representing token that may be carried by state.</typeparam>
     [Serializable()]
-    public class InvalidControlFlowException<TInSymbol, TOutSymbol> : Exception
+    public class InvalidInputSymbolException<TInSymbol, TOutSymbol> : Exception
     {
         /// <summary>
-        /// Returns instance of InvalidControlFlowException class.
+        /// Returns instance of InvalidInputSymbolException class.
         /// </summary>
         /// <param name="currentState">Current state.</param>
         /// <param name="symbol">Current input sumbol.</param>
-        public InvalidControlFlowException(State<TInSymbol, TOutSymbol> currentState, List<TInSymbol> symbols)
+        public InvalidInputSymbolException(State<TInSymbol, TOutSymbol> currentState, TInSymbol symbol)
             : base()
         {
             CurrentState = currentState;
-            TransitionSymbol = symbols;
+            TransitionSymbol = symbol;
         }
 
         /// <summary>
-        /// Returns current state upon wchich exception was twhrown.
+        /// Returns current state upon wchich exception was thrown.
         /// </summary>
         public State<TInSymbol, TOutSymbol> CurrentState { get; }
         /// <summary>
-        /// Snapshot of input buffer which caused exception.
+        /// Represents input transition symbol which caused exception.
         /// </summary>
-        public List<TInSymbol> TransitionSymbol { get; }
+        public TInSymbol TransitionSymbol { get; }
     }
 }

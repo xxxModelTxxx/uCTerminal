@@ -1,194 +1,279 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace EMP.Automata.FiniteAutomata
 {
     /// <summary>
     /// Represents instance of Deterministic Finite Automata.
     /// </summary>
-    /// <typeparam name="TSymbol">Generic type representing symbol of input alphabet. </typeparam>
-    /// <typeparam name="TToken">Generic type representing token that may be carried by state.</typeparam>
-    public class DFA<TSymbol, TToken> : IFiniteAutomata<TSymbol, TToken>
+    /// <typeparam name="TInSymbol">Generic type representing symbol of input alphabet. </typeparam>
+    /// <typeparam name="TOutSymbol">Generic type representing token that may be carried by state.</typeparam>
+    public class DFA<TInSymbol, TOutSymbol> : IFiniteAutomata<TInSymbol, TOutSymbol>
     {
-        /// <summary>
-        /// Internal buffer for already processed and current input symbols.
-        /// </summary>
-        private List<TSymbol> _inputBuffer;
-        /// <summary>
-        /// Reference to current state.
-        /// </summary>
-        private State<TSymbol, TToken> _currentState;
-        /// <summary>
-        /// Reference to start state.
-        /// </summary>
-        private State<TSymbol, TToken> _startState;
-        /// <summary>
-        /// State-Transition table
-        /// </summary>
-        private Dictionary<State<TSymbol, TToken>, Dictionary<TSymbol, Transition<TSymbol, TToken>>> _stateTransitionTable;
-        /// <summary>
-        /// DFA options.
-        /// </summary>
-        private FiniteAutomataOption _options;
+        private State<TInSymbol, TOutSymbol> _currentState;
+        private State<TInSymbol, TOutSymbol> _errorState;
+        private State<TInSymbol, TOutSymbol> _startState;
+        //private Dictionary<State<TInSymbol, TToken>, Dictionary<TInSymbol, Transition<TInSymbol, TToken>>> _stateTransitionTable;
+        private AutomataStatus _status;
+        private FinniteAutomataOptions _options;
+        private ICollection<Transition<TInSymbol, TOutSymbol>> _transitions;
 
         /// <summary>
         /// Returns instance of DFA.
         /// </summary>
-        /// <param name="states">Collection of DFA states.</param>
         /// <param name="transitions">Collection of DFA transitions.</param>
+        /// <param name="startState">Reference to start state.</param>
+        /// <param name="errorState">Reference to error state.</param>
         /// <param name="options">DFA options.</param>
-        public DFA(IEnumerable<Transition<TSymbol, TToken>> transitions,
-                    State<TSymbol, TToken> startState,
-                    FiniteAutomataOption options = FiniteAutomataOption.None)
+        public DFA(ICollection<Transition<TInSymbol, TOutSymbol>> transitions,
+                    State<TInSymbol, TOutSymbol> startState,
+                    State<TInSymbol, TOutSymbol> errorState,
+                    FinniteAutomataOptions options = FinniteAutomataOptions.None)
         {
-            _inputBuffer = new List<TSymbol>();
-            _startState = startState;
+            _transitions = transitions ?? throw new ArgumentNullException();
+            _startState = startState ?? throw new ArgumentNullException();
+            _errorState = errorState ?? throw new ArgumentNullException();
             _currentState = _startState;
             _options = options;
-        }
 
-        private void FillStateTransitionTable(IEnumerable<Transition<TSymbol, TToken>> transitions)
-        {
-            var states = new HashSet<State<TSymbol, TToken>>();
-            var symbols = new HashSet<TSymbol>();
-            
-            // Create State-Transition Table
-            _stateTransitionTable = new Dictionary<State<TSymbol, TToken>, Dictionary<TSymbol, Transition<TSymbol, TToken>>>();
+            //if (transitions is null) throw new ArgumentNullException();
+            //else FillStateTransitionTable(transitions);
 
-            // Extract states and symbols from transitions
-            foreach (Transition<TSymbol, TToken> t in transitions)
-            {
-                states.Add(t.SourceState);
-                states.Add(t.TargetState);
-                symbols.UnionWith(t.InputSymbols);
-            }
-
-            // Fill State-Transition Table rows
-            foreach (State<TSymbol, TToken> s in states)
-            {
-                _stateTransitionTable.Add(s, new Dictionary<TSymbol, Transition<TSymbol, TToken>>());
-            }
-
-            // Fill State-Transition Table
-            // UWAGA: tworzy wyłącznie kolumny tam gdzie są określone przejścia. W przypadku ich braku będzie NULL - sprawdzić zachowanie
-            foreach (Transition<TSymbol, TToken> t in transitions)
-            {
-                foreach (TSymbol s in t.InputSymbols)
-                {
-                    _stateTransitionTable[t.TargetState].Add(s, t);
-                }
-            }
+            _status = AutomataStatus.Ready;
         }
 
         /// <summary>
+        /// Reads current status of DFA.
+        /// </summary>
+        public AutomataStatus Status => _status;
+        /// <summary>
+        /// Returns Transitions collection.
+        /// </summary>
+        public ICollection<Transition<TInSymbol, TOutSymbol>> Transitions => _transitions;
+
+        /// <summary>
+        /// Returns Transition transition for given state and input symbol
+        /// </summary>
+        /// <param name="state">Transition source state</param>
+        /// <param name="inputSymbol">Transition input symbol</param>
+        /// <returns></returns>
+        public Transition<TInSymbol, TOutSymbol> GetTransition(State<TInSymbol, TOutSymbol> state, TInSymbol inputSymbol)
+        {
+            foreach (Transition<TInSymbol, TOutSymbol> t in _transitions)
+            {
+                if (t.SourceState == state && t.ContainsInputSymbol(inputSymbol)) return t;
+            }
+            return null;
+        }
+        /// <summary>
+        /// Return collection of InputSymbols
+        /// </summary>
+        /// <returns></returns>
+        public ICollection<TInSymbol> InputSymbols()
+        {
+            var symbols = new HashSet<TInSymbol>();
+            foreach (Transition<TInSymbol, TOutSymbol> t in _transitions)
+            {
+                symbols.UnionWith(t.InputSymbols);
+            }
+            return symbols;
+        }
+        /// <summary>
         /// Performs single computation step of finite state machine.
         /// </summary>
-        /// <param name="symbol">Input transition symbol.</param>
+        /// <param name="inputSymbol">Input transition symbol.</param>
         /// <returns></returns>
-        public State<TSymbol, TToken> MoveNext(TSymbol symbol)
+        public State<TInSymbol, TOutSymbol> MoveNext(TInSymbol inputSymbol)
         {
-            _inputBuffer.Add(symbol);
+            Transition<TInSymbol, TOutSymbol> t;
+            
+            _status = AutomataStatus.Running;
 
-            foreach (Transition<TSymbol> tr in _transitions)
+            // Check if symbol is null
+            if (inputSymbol is null)
             {
-                if (tr.SourceState == _counter && tr.TransitionSymbols.Contains(symbol))
-                {
-                    if (_counter != tr.TargetState)
-                    {
-                        TryCallExitAction();
-                        _counter = tr.TargetState;
-                        TryCallEntryAction();
-                    }
-                    return _states[_counter];
-                }
+                SetError();
+                throw new ArgumentNullException();
             }
-
-            return TryTerminateInvalidControlFlow();
+            // Check if input symbol is invalid and proceed accordingly
+            else if (!InputSymbols().Contains(inputSymbol))
+            {
+                return TryHandleInvalidInput();
+            }
+            // Check if transition function exist and proceed accordingly
+            else if ((t = GetTransition(_currentState, inputSymbol)) is null)
+            {
+                return TryHandleMissingTransition();
+            }
+            // Process valid program step
+            else
+            {
+                TryCallExitAction(_currentState, inputSymbol);
+                TryCallTransitionAction(t, inputSymbol);
+                _currentState = t.TargetState;
+                TryCallEntryAction(_currentState, inputSymbol);
+                return _currentState;
+            }
+        }
+        /// <summary>
+        /// Return collection of OutputSymbols
+        /// </summary>
+        /// <returns></returns>
+        public ICollection<TOutSymbol> OutputSymbols()
+        {
+            var symbols = new HashSet<TOutSymbol>();
+            foreach (State<TInSymbol, TOutSymbol> s in States())
+            {
+                symbols.Add(s.Output);
+            }
+            return symbols;
         }
         /// <summary>
         /// Resets DFA. Calling this method resets internal program counter (next step will be processed from statring state) and clears internal buffer if ClearBufferOnReset option is eneabled.
         /// </summary>
         public void Reset()
         {
+            _status = AutomataStatus.Ready;
             _currentState = _startState;
-            TryResetBuffer();
         }
         /// <summary>
         /// Runs complete program of DFA. Program is provided as a collection of transition symbols.
         /// </summary>
         /// <param name="input">Program to be performed by finite state machine represented as collection of input symbols.</param>
         /// <returns></returns>
-        public IEnumerable<TToken> Run(IEnumerable<TSymbol> input)
+        public IEnumerable<TOutSymbol> Run(IEnumerable<TInSymbol> input)
         {
-            _inputBuffer.Clear();
-            _counter = 0;
+            if (input is null) throw new ArgumentNullException();
 
-            IList<TToken> _tokens = new List<TToken>();
+            IList<TOutSymbol> output = new List<TOutSymbol>();
+            State<TInSymbol, TOutSymbol> st;
 
-            foreach (TSymbol a in input)
+            Reset();
+
+            foreach (TInSymbol sy in input)
             {
-                var st = MoveNext(a);
+                st = MoveNext(sy);
 
                 if (st.IsAcceptState)
                 {
-                    _tokens.Add(st.Token);
+                    output.Add(st.Output);
                     Reset();
+                }
+                else if (st == _errorState)
+                {
+                    output.Add(st.Output);
+                    break;
                 }
                 else if (st.IsTrapState)
                 {
                     TryEscapeTrapState();
                 }
             }
+            return output;
+        }
+        /// <summary>
+        /// Returns collection of States
+        /// </summary>
+        /// <returns></returns>
+        public ICollection<State<TInSymbol, TOutSymbol>> States()
+        {
+            var states = new HashSet<State<TInSymbol, TOutSymbol>>();
+            foreach (Transition<TInSymbol, TOutSymbol> t in _transitions)
+            {
+                states.Add(t.SourceState);
+                states.Add(t.TargetState);
+            }
+            return states;
+        }
+        ///// <summary>
+        ///// Creates and fills State-Transition table
+        ///// </summary>
+        ///// <param name="transitions">Collection of transitions</param>
+        //private void FillStateTransitionTable(IEnumerable<Transition<TInSymbol, TToken>> transitions)
+        //{
+        //    var states = new HashSet<State<TInSymbol, TToken>>();
+        //    var symbols = new HashSet<TInSymbol>();
 
-            return _tokens;
+        //    // Initialize state transition table
+        //    _stateTransitionTable = new Dictionary<State<TInSymbol, TToken>, Dictionary<TInSymbol, Transition<TInSymbol, TToken>>>();
+
+        //    // Extract states and symbols from transitions
+        //    foreach (Transition<TInSymbol, TToken> t in transitions)
+        //    {
+        //        states.Add(t.SourceState);
+        //        states.Add(t.TargetState);
+        //        symbols.UnionWith(t.InputSymbols);
+        //    }
+
+        //    // Create State-Transition Table rows and collumns
+        //    foreach (State<TInSymbol, TToken> st in states)
+        //    {
+        //        _stateTransitionTable.Add(st, new Dictionary<TInSymbol, Transition<TInSymbol, TToken>>());
+        //        foreach (TInSymbol sy in symbols)
+        //        {
+        //            _stateTransitionTable[st].Add(sy, null);
+        //        }
+        //    }
+
+        //    // Fill State-Transition Table
+        //    foreach (Transition<TInSymbol, TToken> t in transitions)
+        //    {
+        //        foreach (TInSymbol s in t.InputSymbols)
+        //        {
+        //            _stateTransitionTable[t.SourceState][s] = t;
+        //        }
+        //    }
+        //}
+        /// <summary>
+        /// Sets DFA to error state.
+        /// </summary>
+        private void SetError()
+        {
+            _status = AutomataStatus.Error;
+            _currentState = _errorState;
         }
         /// <summary>
         /// Performs attempt to reset DFA. Reset is performed if ResetOnTrapState option is eneabled.
         /// </summary>
         private void TryEscapeTrapState()
         {
-            if ((_options & FiniteAutomataOption.ResetOnTrapState) != 0)
+            if ((_options & FinniteAutomataOptions.ResetOnTrapState) != 0)
             {
                 Reset();
+            }
+            else
+            {
+                _status = AutomataStatus.Trapped;
             }
         }
         /// <summary>
         /// Performs attempt of invoking EntryAction event for current state. Attempt is succesful if CallEntryAction option is eneabled.
         /// </summary>
-        private void TryCallEntryAction()
+        private void TryCallEntryAction(State<TInSymbol, TOutSymbol> state, TInSymbol symbol)
         {
-            if ((_options & FiniteAutomataOption.CallEntryAction) != 0)
+            if ((_options & FinniteAutomataOptions.CallEntryAction) != 0)
             {
-                _states[_counter].OnEntryAction(_inputBuffer);
+                state.OnEntryAction(symbol);
             }
         }
         /// <summary>
         /// Performs attempt of invoking ExitAction event for current state. Attempt is succesful if CallExitAction option is eneabled.
         /// </summary>
-        private void TryCallExitAction()
+        private void TryCallExitAction(State<TInSymbol, TOutSymbol> state, TInSymbol symbol)
         {
-            if ((_options & FiniteAutomataOption.CallExitAction) != 0)
+            if ((_options & FinniteAutomataOptions.CallExitAction) != 0)
             {
-                _states[_counter].OnExitAction(_inputBuffer);
+                state.OnExitAction(symbol);
             }
         }
         /// <summary>
         /// Performs attempt of invoking TransitionAction event for current transition. Attempt is succesful if CallTransitionAction option is eneabled.
         /// </summary>
-        private void TryCallTransitionAction()
+        private void TryCallTransitionAction(Transition<TInSymbol, TOutSymbol> transition, TInSymbol symbol)
         {
-            if ((_options & FiniteAutomataOption.CallTransitionAction) != 0)
+            if ((_options & FinniteAutomataOptions.CallTransitionAction) != 0)
             {
-                _states[_counter].OnTransitionAction(_inputBuffer);
-            }
-        }
-        /// <summary>
-        /// Performs attempt to reset internal input buffer. Reset is performed if ClearBufferOnReset option is eneabled.
-        /// </summary>
-        private void TryResetBuffer()
-        {
-            if ((_options & FiniteAutomataOption.ClearBufferOnReset) != 0)
-            {
-                _inputBuffer.Clear();
+                transition.OnTransitionAction(symbol);
             }
         }
         /// <summary>
@@ -196,15 +281,43 @@ namespace EMP.Automata.FiniteAutomata
         /// If RepeatStateIfTransitionNotFound option is eneabled, program is contiued from current state (if next input symbol is prvided). Othervise throws InvalidControlFlowException exception.
         /// </summary>
         /// <returns></returns>
-        private State<TSymbol, TToken> TryTerminateInvalidControlFlow()
+        private State<TInSymbol, TOutSymbol> TryHandleInvalidInput()
         {
-            if ((_options & FiniteAutomataOption.RepeatStateIfTransitionNotFound) != 0)
+            if ((_options & FinniteAutomataOptions.IgnoreInvalidSymbol) != 0)
             {
-                return _states[_counter];
+                return _currentState;
+            }
+            else if ((_options & FinniteAutomataOptions.ResetOnInvalidSymbol) != 0)
+            {
+                Reset();
+                return _currentState;
             }
             else
             {
-                throw new InvalidControlFlowException<TSymbol, TToken>(_states[_counter], _inputBuffer[^1]);
+                SetError();
+                return _currentState;
+            }
+        }
+        /// <summary>
+        /// Performs attempt of restoring control flow after invalid input symbol or lack of relevant transition. 
+        /// If RepeatStateIfTransitionNotFound option is eneabled, program is contiued from current state (if next input symbol is prvided). Othervise throws InvalidControlFlowException exception.
+        /// </summary>
+        /// <returns></returns>
+        private State<TInSymbol, TOutSymbol> TryHandleMissingTransition()
+        {
+            if ((_options & FinniteAutomataOptions.IgnoreMissingTransition) != 0)
+            {
+                return _currentState;
+            }
+            else if ((_options & FinniteAutomataOptions.ResetOnMissingTransition) != 0)
+            {
+                Reset();
+                return _currentState;
+            }
+            else
+            {
+                SetError();
+                return _currentState;
             }
         }
     }
