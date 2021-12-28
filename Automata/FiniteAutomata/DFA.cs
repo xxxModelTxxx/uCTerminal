@@ -13,7 +13,6 @@ namespace EMP.Automata.FiniteAutomata
         private State<TInSymbol, TOutSymbol> _currentState;
         private State<TInSymbol, TOutSymbol> _errorState;
         private State<TInSymbol, TOutSymbol> _startState;
-        //private Dictionary<State<TInSymbol, TToken>, Dictionary<TInSymbol, Transition<TInSymbol, TToken>>> _stateTransitionTable;
         private AutomataStatus _status;
         private FinniteAutomataOptions _options;
         private ICollection<Transition<TInSymbol, TOutSymbol>> _transitions;
@@ -35,10 +34,6 @@ namespace EMP.Automata.FiniteAutomata
             _errorState = errorState ?? throw new ArgumentNullException();
             _currentState = _startState;
             _options = options;
-
-            //if (transitions is null) throw new ArgumentNullException();
-            //else FillStateTransitionTable(transitions);
-
             _status = AutomataStatus.Ready;
         }
 
@@ -185,45 +180,6 @@ namespace EMP.Automata.FiniteAutomata
             }
             return states;
         }
-        ///// <summary>
-        ///// Creates and fills State-Transition table
-        ///// </summary>
-        ///// <param name="transitions">Collection of transitions</param>
-        //private void FillStateTransitionTable(IEnumerable<Transition<TInSymbol, TToken>> transitions)
-        //{
-        //    var states = new HashSet<State<TInSymbol, TToken>>();
-        //    var symbols = new HashSet<TInSymbol>();
-
-        //    // Initialize state transition table
-        //    _stateTransitionTable = new Dictionary<State<TInSymbol, TToken>, Dictionary<TInSymbol, Transition<TInSymbol, TToken>>>();
-
-        //    // Extract states and symbols from transitions
-        //    foreach (Transition<TInSymbol, TToken> t in transitions)
-        //    {
-        //        states.Add(t.SourceState);
-        //        states.Add(t.TargetState);
-        //        symbols.UnionWith(t.InputSymbols);
-        //    }
-
-        //    // Create State-Transition Table rows and collumns
-        //    foreach (State<TInSymbol, TToken> st in states)
-        //    {
-        //        _stateTransitionTable.Add(st, new Dictionary<TInSymbol, Transition<TInSymbol, TToken>>());
-        //        foreach (TInSymbol sy in symbols)
-        //        {
-        //            _stateTransitionTable[st].Add(sy, null);
-        //        }
-        //    }
-
-        //    // Fill State-Transition Table
-        //    foreach (Transition<TInSymbol, TToken> t in transitions)
-        //    {
-        //        foreach (TInSymbol s in t.InputSymbols)
-        //        {
-        //            _stateTransitionTable[t.SourceState][s] = t;
-        //        }
-        //    }
-        //}
         /// <summary>
         /// Sets DFA to error state.
         /// </summary>
