@@ -3,14 +3,13 @@ using System.Collections.Generic;
 
 namespace EMP.Automata
 {
-    // TODO: Dodać GetHashCode i Equals
     /// <summary>
     /// Represent finite automata single transition definition class.
     /// </summary>
     /// <typeparam name="TInSymbol">Generic type representing symbol of input alphabet. </typeparam>
     public class Transition<TInSymbol, TOutSymbol>
     {
-        private List<TInSymbol> _inputSymbols;
+        private HashSet<TInSymbol> _inputSymbols;
         private State<TInSymbol, TOutSymbol> _sourceState;
         private State<TInSymbol, TOutSymbol> _targetState;
 
@@ -23,7 +22,8 @@ namespace EMP.Automata
         public Transition(State<TInSymbol, TOutSymbol> sourceState, State<TInSymbol, TOutSymbol> targetState, TInSymbol symbol)
             : this(sourceState, targetState)
         {
-            _inputSymbols = new List<TInSymbol>(new TInSymbol[] { symbol });
+            _inputSymbols = new HashSet<TInSymbol>();
+            _inputSymbols.Add(symbol);
         }
         /// <summary>
         /// Returns instance of Transition class.
@@ -43,10 +43,10 @@ namespace EMP.Automata
         /// <param name="sourceState">Source state of transition.</param>
         /// <param name="targetState">Target state of transition.</param>
         /// <param name="symbols">Collection of transition symbols.</param>
-        public Transition(State<TInSymbol, TOutSymbol> sourceState, State<TInSymbol, TOutSymbol> targetState, ICollection<TInSymbol> symbols)
+        public Transition(State<TInSymbol, TOutSymbol> sourceState, State<TInSymbol, TOutSymbol> targetState, IEnumerable<TInSymbol> symbols)
             : this(sourceState, targetState)
         {
-            _inputSymbols = new List<TInSymbol>(symbols);
+            _inputSymbols = new HashSet<TInSymbol>(symbols);
         }
         /// <summary>
         /// Returns instance of Transition class.
@@ -55,7 +55,7 @@ namespace EMP.Automata
         /// <param name="targetState">Target state of transition.</param>
         /// <param name="symbols">Collection of transition symbols.</param>
         /// <param name="transitionAction">Delegate for TransitionAction event.</param>
-        public Transition(State<TInSymbol, TOutSymbol> sourceState, State<TInSymbol, TOutSymbol> targetState, ICollection<TInSymbol> symbols, ActionEventHandler transitionAction)
+        public Transition(State<TInSymbol, TOutSymbol> sourceState, State<TInSymbol, TOutSymbol> targetState, IEnumerable<TInSymbol> symbols, ActionEventHandler transitionAction)
             :this(sourceState, targetState, symbols)
         {
             if (transitionAction is not null) TransitionAction += transitionAction;
@@ -75,7 +75,7 @@ namespace EMP.Automata
         /// <summary>
         /// Returns HashSet collection of transition symbols.
         /// </summary>
-        public List<TInSymbol> InputSymbols => _inputSymbols;
+        public ICollection<TInSymbol> InputSymbols => _inputSymbols;
         /// <summary>
         /// Returns source state of transition.
         /// </summary>
@@ -92,8 +92,31 @@ namespace EMP.Automata
         /// <returns></returns>
         public bool ContainsInputSymbol(TInSymbol symbol)
         {
-            return InputSymbols.Contains(symbol);
+            return _inputSymbols.Contains(symbol);
         }
+        public override bool Equals(object obj)
+        {
+            var tr = (Transition<TInSymbol, TOutSymbol>)obj;
+
+            return (
+                tr._sourceState == this._sourceState && 
+                tr._targetState == this._targetState && 
+                this._inputSymbols.SetEquals(tr._inputSymbols));
+        }
+        public override int GetHashCode()
+        {
+            HashCode hc = new HashCode();
+
+            hc.Add(_sourceState);
+            hc.Add(_targetState);
+            foreach (TInSymbol s in _inputSymbols)
+            {
+                hc.Add(s);
+            }
+
+            return hc.ToHashCode();
+        }
+
 
         /// <summary>
         /// Invokes TransitionAction event.

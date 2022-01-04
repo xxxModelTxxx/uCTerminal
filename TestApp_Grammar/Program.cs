@@ -1,5 +1,4 @@
 ﻿using EMP.Syntax.Grammar;
-using System;
 using System.Collections.Generic;
 
 namespace TestApp_Grammar

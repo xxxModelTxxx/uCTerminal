@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace EMP.Automata.FiniteAutomata
 {
+    // TODO: Check transition collection passed to contructor whether they are deterministic - implement GetHashCode and Equals
     /// <summary>
     /// Represents instance of Deterministic Finite Automata.
     /// </summary>
@@ -15,7 +16,7 @@ namespace EMP.Automata.FiniteAutomata
         private State<TInSymbol, TOutSymbol> _startState;
         private AutomataStatus _status;
         private FinniteAutomataOptions _options;
-        private ICollection<Transition<TInSymbol, TOutSymbol>> _transitions;
+        private IEnumerable<Transition<TInSymbol, TOutSymbol>> _transitions;
 
         /// <summary>
         /// Returns instance of DFA.
@@ -24,7 +25,7 @@ namespace EMP.Automata.FiniteAutomata
         /// <param name="startState">Reference to start state.</param>
         /// <param name="errorState">Reference to error state.</param>
         /// <param name="options">DFA options.</param>
-        public DFA(ICollection<Transition<TInSymbol, TOutSymbol>> transitions,
+        public DFA(IEnumerable<Transition<TInSymbol, TOutSymbol>> transitions,
                     State<TInSymbol, TOutSymbol> startState,
                     State<TInSymbol, TOutSymbol> errorState,
                     FinniteAutomataOptions options = FinniteAutomataOptions.None)
@@ -44,7 +45,7 @@ namespace EMP.Automata.FiniteAutomata
         /// <summary>
         /// Returns Transitions collection.
         /// </summary>
-        public ICollection<Transition<TInSymbol, TOutSymbol>> Transitions => _transitions;
+        public IEnumerable<Transition<TInSymbol, TOutSymbol>> Transitions => _transitions;
 
         /// <summary>
         /// Returns Transition transition for given state and input symbol

@@ -8,7 +8,7 @@ namespace EMP.Syntax.Grammar
 
         public Grammar(ICollection<Rule> rules)
         {
-            _rules = new List<Rule>(rules);
+            _rules = rules;
         }
 
         public IEnumerable<Rule> Rules 
