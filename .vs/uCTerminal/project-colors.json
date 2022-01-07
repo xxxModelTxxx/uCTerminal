@@ -1,0 +1,21 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "4bb105ac-0960-4a3c-b8a1-95d5d757b300": {
+      "ProjectGuid": "4bb105ac-0960-4a3c-b8a1-95d5d757b300",
+      "DisplayName": "Syntax",
+      "ColorIndex": 0
+    },
+    "6bfaad3f-d98b-4c36-98cf-38456bf71670": {
+      "ProjectGuid": "6bfaad3f-d98b-4c36-98cf-38456bf71670",
+      "DisplayName": "TestApp_Grammar",
+      "ColorIndex": 1
+    },
+    "606592c9-27f1-4cd7-8017-a8a1e82c3771": {
+      "ProjectGuid": "606592c9-27f1-4cd7-8017-a8a1e82c3771",
+      "DisplayName": "Automata",
+      "ColorIndex": 2
+    }
+  },
+  "NextColorIndex": 3
+}

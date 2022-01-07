@@ -1,0 +1,12 @@
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Microcontrolers\bin\Debug\net5.0\Microcontrolers.deps.json
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Microcontrolers\bin\Debug\net5.0\Microcontrolers.dll
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Microcontrolers\bin\Debug\net5.0\ref\Microcontrolers.dll
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Microcontrolers\bin\Debug\net5.0\Microcontrolers.pdb
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Microcontrolers\obj\Debug\net5.0\Microcontrolers.csproj.AssemblyReference.cache
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Microcontrolers\obj\Debug\net5.0\Microcontrolers.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Microcontrolers\obj\Debug\net5.0\Microcontrolers.AssemblyInfoInputs.cache
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Microcontrolers\obj\Debug\net5.0\Microcontrolers.AssemblyInfo.cs
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Microcontrolers\obj\Debug\net5.0\Microcontrolers.csproj.CoreCompileInputs.cache
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Microcontrolers\obj\Debug\net5.0\Microcontrolers.dll
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Microcontrolers\obj\Debug\net5.0\ref\Microcontrolers.dll
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Microcontrolers\obj\Debug\net5.0\Microcontrolers.pdb
