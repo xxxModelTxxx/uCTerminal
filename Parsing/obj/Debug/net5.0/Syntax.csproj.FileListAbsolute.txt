@@ -1,0 +1,15 @@
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Parsing\bin\Debug\net5.0\Syntax.deps.json
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Parsing\bin\Debug\net5.0\Syntax.dll
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Parsing\bin\Debug\net5.0\ref\Syntax.dll
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Parsing\bin\Debug\net5.0\Syntax.pdb
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Parsing\bin\Debug\net5.0\Automata.dll
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Parsing\bin\Debug\net5.0\Automata.pdb
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Parsing\obj\Debug\net5.0\Syntax.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Parsing\obj\Debug\net5.0\Syntax.AssemblyInfoInputs.cache
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Parsing\obj\Debug\net5.0\Syntax.AssemblyInfo.cs
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Parsing\obj\Debug\net5.0\Syntax.csproj.CoreCompileInputs.cache
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Parsing\obj\Debug\net5.0\Syntax.csproj.CopyComplete
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Parsing\obj\Debug\net5.0\Syntax.dll
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Parsing\obj\Debug\net5.0\ref\Syntax.dll
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Parsing\obj\Debug\net5.0\Syntax.pdb
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\uCTerminal\Parsing\obj\Debug\net5.0\Syntax.csproj.AssemblyReference.cache

@@ -1,0 +1,16 @@
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\ArduinoTerminal\TestApp_Strings\bin\Debug\net5.0\TestApp_Strings.exe
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\ArduinoTerminal\TestApp_Strings\bin\Debug\net5.0\TestApp_Strings.deps.json
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\ArduinoTerminal\TestApp_Strings\bin\Debug\net5.0\TestApp_Strings.runtimeconfig.json
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\ArduinoTerminal\TestApp_Strings\bin\Debug\net5.0\TestApp_Strings.runtimeconfig.dev.json
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\ArduinoTerminal\TestApp_Strings\bin\Debug\net5.0\TestApp_Strings.dll
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\ArduinoTerminal\TestApp_Strings\bin\Debug\net5.0\ref\TestApp_Strings.dll
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\ArduinoTerminal\TestApp_Strings\bin\Debug\net5.0\TestApp_Strings.pdb
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\ArduinoTerminal\TestApp_Strings\obj\Debug\net5.0\TestApp_Strings.csprojAssemblyReference.cache
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\ArduinoTerminal\TestApp_Strings\obj\Debug\net5.0\TestApp_Strings.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\ArduinoTerminal\TestApp_Strings\obj\Debug\net5.0\TestApp_Strings.AssemblyInfoInputs.cache
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\ArduinoTerminal\TestApp_Strings\obj\Debug\net5.0\TestApp_Strings.AssemblyInfo.cs
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\ArduinoTerminal\TestApp_Strings\obj\Debug\net5.0\TestApp_Strings.csproj.CoreCompileInputs.cache
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\ArduinoTerminal\TestApp_Strings\obj\Debug\net5.0\TestApp_Strings.dll
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\ArduinoTerminal\TestApp_Strings\obj\Debug\net5.0\ref\TestApp_Strings.dll
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\ArduinoTerminal\TestApp_Strings\obj\Debug\net5.0\TestApp_Strings.pdb
+C:\Users\marci\OneDrive\Dokumenty\Warsztat\Visual Studio\repos\ArduinoTerminal\TestApp_Strings\obj\Debug\net5.0\TestApp_Strings.genruntimeconfig.cache

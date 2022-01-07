@@ -15,7 +15,7 @@ namespace EMP.Automata.FiniteAutomata
         private State<TInSymbol, TOutSymbol> _errorState;
         private State<TInSymbol, TOutSymbol> _startState;
         private AutomataStatus _status;
-        private FinniteAutomataOptions _options;
+        private FiniteAutomataOptions _options;
         private IEnumerable<Transition<TInSymbol, TOutSymbol>> _transitions;
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace EMP.Automata.FiniteAutomata
         public DFA(IEnumerable<Transition<TInSymbol, TOutSymbol>> transitions,
                     State<TInSymbol, TOutSymbol> startState,
                     State<TInSymbol, TOutSymbol> errorState,
-                    FinniteAutomataOptions options = FinniteAutomataOptions.None)
+                    FiniteAutomataOptions options = FiniteAutomataOptions.None)
         {
             _transitions = transitions ?? throw new ArgumentNullException();
             _startState = startState ?? throw new ArgumentNullException();
@@ -36,6 +36,7 @@ namespace EMP.Automata.FiniteAutomata
             _currentState = _startState;
             _options = options;
             _status = AutomataStatus.Ready;
+            if (!IsDeterministic()) throw new ArgumentOutOfRangeException("Non deterministic transitions passed to DFA class constructor");
         }
 
         /// <summary>
@@ -194,7 +195,7 @@ namespace EMP.Automata.FiniteAutomata
         /// </summary>
         private void TryEscapeTrapState()
         {
-            if ((_options & FinniteAutomataOptions.ResetOnTrapState) != 0)
+            if ((_options & FiniteAutomataOptions.ResetOnTrapState) != 0)
             {
                 Reset();
             }
@@ -208,7 +209,7 @@ namespace EMP.Automata.FiniteAutomata
         /// </summary>
         private void TryCallEntryAction(State<TInSymbol, TOutSymbol> state, TInSymbol symbol)
         {
-            if ((_options & FinniteAutomataOptions.CallEntryAction) != 0)
+            if ((_options & FiniteAutomataOptions.CallEntryAction) != 0)
             {
                 state.OnEntryAction(symbol);
             }
@@ -218,7 +219,7 @@ namespace EMP.Automata.FiniteAutomata
         /// </summary>
         private void TryCallExitAction(State<TInSymbol, TOutSymbol> state, TInSymbol symbol)
         {
-            if ((_options & FinniteAutomataOptions.CallExitAction) != 0)
+            if ((_options & FiniteAutomataOptions.CallExitAction) != 0)
             {
                 state.OnExitAction(symbol);
             }
@@ -228,7 +229,7 @@ namespace EMP.Automata.FiniteAutomata
         /// </summary>
         private void TryCallTransitionAction(Transition<TInSymbol, TOutSymbol> transition, TInSymbol symbol)
         {
-            if ((_options & FinniteAutomataOptions.CallTransitionAction) != 0)
+            if ((_options & FiniteAutomataOptions.CallTransitionAction) != 0)
             {
                 transition.OnTransitionAction(symbol);
             }
@@ -240,11 +241,11 @@ namespace EMP.Automata.FiniteAutomata
         /// <returns></returns>
         private State<TInSymbol, TOutSymbol> TryHandleInvalidInput()
         {
-            if ((_options & FinniteAutomataOptions.IgnoreInvalidSymbol) != 0)
+            if ((_options & FiniteAutomataOptions.IgnoreInvalidSymbol) != 0)
             {
                 return _currentState;
             }
-            else if ((_options & FinniteAutomataOptions.ResetOnInvalidSymbol) != 0)
+            else if ((_options & FiniteAutomataOptions.ResetOnInvalidSymbol) != 0)
             {
                 Reset();
                 return _currentState;
@@ -262,11 +263,11 @@ namespace EMP.Automata.FiniteAutomata
         /// <returns></returns>
         private State<TInSymbol, TOutSymbol> TryHandleMissingTransition()
         {
-            if ((_options & FinniteAutomataOptions.IgnoreMissingTransition) != 0)
+            if ((_options & FiniteAutomataOptions.IgnoreMissingTransition) != 0)
             {
                 return _currentState;
             }
-            else if ((_options & FinniteAutomataOptions.ResetOnMissingTransition) != 0)
+            else if ((_options & FiniteAutomataOptions.ResetOnMissingTransition) != 0)
             {
                 Reset();
                 return _currentState;
@@ -276,6 +277,27 @@ namespace EMP.Automata.FiniteAutomata
                 SetError();
                 return _currentState;
             }
+        }
+        /// <summary>
+        /// Verifies if DFA is determinnistic
+        /// </summary>
+        /// <returns>Returns true if DFA is deterministic or false if not.</returns>
+        private bool IsDeterministic()
+        {
+            foreach (Transition<TInSymbol, TOutSymbol> t1 in _transitions)
+            {
+                foreach (Transition<TInSymbol, TOutSymbol> t2 in _transitions)
+                {
+                    if (t1.SourceState == t2.SourceState)
+                    {
+                        var s1 = new HashSet<TInSymbol>(t1.InputSymbols);
+                        var s2 = new HashSet<TInSymbol>(t2.InputSymbols);
+
+                        if (s1.Overlaps(s2)) return false;
+                    }
+                }
+            }
+            return true;
         }
     }
 }

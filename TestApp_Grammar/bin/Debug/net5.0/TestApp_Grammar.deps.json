@@ -1,0 +1,49 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {
+      "TestApp_Grammar/1.0.0": {
+        "dependencies": {
+          "Syntax": "1.0.0"
+        },
+        "runtime": {
+          "TestApp_Grammar.dll": {}
+        }
+      },
+      "Automata/1.0.0": {
+        "runtime": {
+          "Automata.dll": {}
+        }
+      },
+      "Syntax/1.0.0": {
+        "dependencies": {
+          "Automata": "1.0.0"
+        },
+        "runtime": {
+          "Syntax.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "TestApp_Grammar/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Automata/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Syntax/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
